@@ -2,6 +2,7 @@ package com.geekq.miaosha.rabbitmq;
 
 import com.geekq.miaosha.domain.MiaoshaUser;
 import com.geekq.miaosha.redis.RedisService;
+import com.geekq.miaosha.utils.BeanUtil;
 import com.geekq.miaosha.vo.MiaoShaMessageVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class MQSender {
 	private RabbitTemplate rabbitTemplate;
 
 	public void sendMiaoshaMessage(MiaoshaMessage mm) {
-		String msg = RedisService.beanToString(mm);
+		String msg = BeanUtil.beanToString(mm);
 		log.info("send message:"+msg);
 		amqpTemplate.convertAndSend(MQConfig.MIAOSHA_QUEUE, msg);
 	}
@@ -42,7 +43,7 @@ public class MQSender {
      * @param
      */
     public void sendRegisterMessage(MiaoShaMessageVo miaoShaMessageVo) {
-		String msg = RedisService.beanToString(miaoShaMessageVo);
+		String msg = BeanUtil.beanToString(miaoShaMessageVo);
         log.info("send message:{}" , msg);
 		rabbitTemplate.convertAndSend(MQConfig.MIAOSHATEST,msg);
 //        rabbitTemplate.convertAndSend(MQConfig.EXCHANGE_TOPIC,"miaosha_*", msg);

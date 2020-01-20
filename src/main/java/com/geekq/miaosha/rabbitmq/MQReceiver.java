@@ -7,6 +7,7 @@ import com.geekq.miaosha.service.GoodsService;
 import com.geekq.miaosha.service.MiaoShaMessageService;
 import com.geekq.miaosha.service.MiaoshaService;
 import com.geekq.miaosha.service.OrderService;
+import com.geekq.miaosha.utils.BeanUtil;
 import com.geekq.miaosha.vo.GoodsVo;
 import com.geekq.miaosha.vo.MiaoShaMessageVo;
 import com.rabbitmq.client.Channel;
@@ -43,7 +44,7 @@ public class MQReceiver {
 		@RabbitListener(queues=MQConfig.MIAOSHA_QUEUE)
 		public void receive(String message) {
 			log.info("receive message:"+message);
-			MiaoshaMessage mm  = RedisService.stringToBean(message, MiaoshaMessage.class);
+			MiaoshaMessage mm  = BeanUtil.stringToBean(message, MiaoshaMessage.class);
 			MiaoshaUser user = mm.getUser();
 			long goodsId = mm.getGoodsId();
 
@@ -68,7 +69,7 @@ public class MQReceiver {
 		log.info("接受到的消息为:{}",message);
 		String messRegister = new String(message.getBody(), "UTF-8");
 		channel.basicAck(message.getMessageProperties().getDeliveryTag(), true);
-		MiaoShaMessageVo msm  = RedisService.stringToBean(messRegister, MiaoShaMessageVo.class);
+		MiaoShaMessageVo msm  = BeanUtil.stringToBean(messRegister, MiaoShaMessageVo.class);
 		messageService.insertMs(msm);
 		}
 }
