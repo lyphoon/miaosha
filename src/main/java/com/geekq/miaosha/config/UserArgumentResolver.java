@@ -14,7 +14,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 /**
  * 这个是这样的：Controller中是一个MiarshaUser参数，但是前端可能不会传入，
  * 这时通过resolverArgument获取到真正的MiarshaUser实例
- * OrderController，RegistrController中使用到了
+ * OrderController，RegistryController中使用到了. 这时，方法上一定会有@AccessLimit注解
+ *
+ * ==>OrderController是不对的， 正确的使用是RegistryController中的使用
  */
 @Service
 public class UserArgumentResolver implements HandlerMethodArgumentResolver {
