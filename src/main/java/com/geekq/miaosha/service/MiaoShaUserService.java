@@ -42,12 +42,15 @@ public class MiaoShaUserService {
     private MQSender sender ;
 
 
+    /**
+     * 用token取MiaoshaUser, 同时更新redis中token的过期时间，另外将token包装成Cookie放置在HttpServletResponse中
+     */
     public MiaoshaUser getByToken(HttpServletResponse response , String token) {
 
         if(StringUtils.isEmpty(token)){
             return null ;
         }
-        MiaoshaUser user =redisService.get(MiaoShaUserKey.token,token,MiaoshaUser.class) ;
+        MiaoshaUser user =redisService.get(MiaoShaUserKey.token,token,MiaoshaUser.class) ;  //从Redis中取出用户，token会有前缀tk
         if(user!=null) {
             addCookie(response, token, user);
         }
@@ -164,9 +167,10 @@ public class MiaoShaUserService {
         addCookie(response, token, user);
         return token ;
     }
+
     private void addCookie(HttpServletResponse response, String token, MiaoshaUser user) {
-        redisService.set(MiaoShaUserKey.token, token, user);
-        Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
+        redisService.set(MiaoShaUserKey.token, token, user);  //将token-user设置回redis,主要是修改过期时间
+        Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);  //在Response中，将token设置到Cookie
         //设置有效期
         cookie.setMaxAge(MiaoShaUserKey.token.expireSeconds());
         cookie.setPath("/");
